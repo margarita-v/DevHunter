@@ -1,0 +1,26 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "babel-node app/server",
+    "dev": "nodemon --exec 'yarn lint --fix && yarn start'",
+    "lint": "eslint app",
+    "lint:fix": "eslint --fix app"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.1",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^4.17.0",
+    "eslint-config-google": "^0.9.1",
+    "nodemon": "^1.14.12"
+  },
+  "dependencies": {
+    "koa": "^2.5.0"
+  }
+}
