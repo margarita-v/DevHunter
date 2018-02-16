@@ -8,15 +8,7 @@ export default (mongoUri) => {
     }
 
     // Use promises because Mongo connection is synchronous
-    return new Promise((res, rej) => {
-        mongoose
-            .connect(mongoUri)
-            .then((mongoDb) => {
-                res(mongoDb);
-                console.log('Mongo connected');
-            })
-            .catch((err) => {
-                rej(err);
-            });
-    });
+    return mongoose
+        .connect(mongoUri)
+        .then(() => { console.log('Mongo connected'); });
 };
