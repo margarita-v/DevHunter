@@ -6,5 +6,5 @@ const IS_DEV = ENV === envs.development;
 export default ENV;
 
 export {
-    IS_DEV
+    IS_DEV,
 };

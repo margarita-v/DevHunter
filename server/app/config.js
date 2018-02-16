@@ -16,5 +16,5 @@ const MONGO_URI = process.env.MONGO_URI || config.get('mongo.uri');
 
 export {
     PORT,
-    MONGO_URI
+    MONGO_URI,
 };

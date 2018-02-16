@@ -1,12 +1,12 @@
-import { MONGO_URI } from "../config";
-import mongooseConnector from './mongoose-connector'
+import { MONGO_URI } from '../config';
+import mongooseConnector from './mongoose-connector';
 
 export {
-    mongooseConnector
+    mongooseConnector,
 };
 
 export default function initConnectors() {
-    mongooseConnector(MONGO_URI)
-};
+    mongooseConnector(MONGO_URI);
+}
 
 

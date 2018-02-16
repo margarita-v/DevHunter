@@ -7,27 +7,27 @@ mongoose.plugin(uniqueValidator);
 const UserSchema = new Schema({
    email: {
        type: String,
-       unique: 'User with email "VALUE" already exists',
+       unique: 'User with email "{VALUE}" already exists',
        lowercase: true,
-       required: 'Email is required'
+       required: 'Email is required',
    },
    password: {
        type: String,
-       required: 'Password is required'
+       required: 'Password is required',
    },
    firstName: {
        type: String,
        lowercase: true,
-       required: 'First name is required'
+       required: 'First name is required',
    },
    lastName: {
        type: String,
        lowercase: true,
-       required: 'Last name is required'
-   }
+       required: 'Last name is required',
+   },
 }, {
     // Mongoose will automatically add fields createdAt and updatedAt
-    timestamp: true
+    timestamp: true,
 });
 
 /**
@@ -38,7 +38,7 @@ UserSchema.statics.createFields = ['email', 'password', 'firstName', 'lastName']
 /**
  * Handler for a user creation
  */
-UserSchema.pre('save', function (next) {
+UserSchema.pre('save', function(next) {
    if (!this.isModified('password')) {
        return next();
    }
@@ -51,13 +51,15 @@ UserSchema.pre('save', function (next) {
 /**
  * Function which returns a user with public fields only.
  */
-UserSchema.statics.findOneWithPublicFields = (params, cb) =>
-    this.findOne(params, cb)
+UserSchema.statics.findOneWithPublicFields = function(params, cb) {
+    return this
+        .findOne(params, cb)
         .select({
             // 0 because we don't need to get values of that fields
             password: 0,
             _id: 0,
-            __v: 0
+            __v: 0,
         });
+};
 
 export default mongoose.model('user', UserSchema);

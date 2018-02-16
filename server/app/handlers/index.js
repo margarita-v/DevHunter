@@ -1,7 +1,7 @@
 import bodyParser from 'koa-bodyparser';
 import logger from 'koa-logger';
 import error from './error';
-import { IS_DEV } from "../utils/env";
+import { IS_DEV } from '../utils/env';
 
 /**
  * Function which configures handlers for an application instance
