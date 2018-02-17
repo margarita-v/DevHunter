@@ -13,8 +13,10 @@ if (!envs[env]) {
 // Get values from the environment variable or get default values
 const PORT = process.env.PORT || config.get('port');
 const MONGO_URI = process.env.MONGO_URI || config.get('mongo.uri');
+const JWT_SECRET_KEY = config.get('jwt.secretKey');
 
 export {
     PORT,
     MONGO_URI,
+    JWT_SECRET_KEY,
 };

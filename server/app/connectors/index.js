@@ -1,6 +1,6 @@
 import { MONGO_URI } from '../config';
 import mongooseConnector from './mongoose-connector';
-import server from "../server";
+import server from '../server';
 
 export {
     mongooseConnector,
@@ -14,5 +14,3 @@ export default async function initConnectors() {
         console.log(err);
     }
 }
-
-

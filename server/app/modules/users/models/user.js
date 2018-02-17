@@ -38,7 +38,7 @@ UserSchema.statics.createFields = ['email', 'password', 'firstName', 'lastName']
 /**
  * Function which compares passwords
  */
-UserSchema.methods.comparePasswords = function (password) {
+UserSchema.methods.comparePasswords = function(password) {
     return bcrypt.compareSync(password, this.password);
 };
 
