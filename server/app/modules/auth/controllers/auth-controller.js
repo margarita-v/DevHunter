@@ -1,7 +1,6 @@
-import jwt from 'jsonwebtoken';
 import pick from 'lodash/pick';
 import { User } from '../../users';
-import { JWT_SECRET_KEY } from '../../../config';
+import jwtService from '../../../services/jwt-service';
 
 const ERROR_CODE = 400;
 
@@ -34,11 +33,8 @@ export default {
         // Check user's password
         checkCondition(ctx, !user.comparePasswords(password), 'Invalid password');
 
-        // Generate token.
-        // JWT function gets object of hashing and string for hashing
-        const token = await jwt.sign({ email }, JWT_SECRET_KEY);
-
-        // Return token to the user
+        // Return generated token to the user
+        const token = await jwtService.generateToken({ email });
         ctx.body = { data: token };
     },
 };

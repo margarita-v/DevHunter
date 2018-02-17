@@ -1,6 +1,7 @@
 import bodyParser from 'koa-bodyparser';
 import logger from 'koa-logger';
 import error from './error';
+import jwt from './jwt';
 import { IS_DEV } from '../utils/env';
 
 /**
@@ -12,5 +13,6 @@ export default (app) => {
         app.use(logger());
     }
     app.use(error());
+    app.use(jwt());
     app.use(bodyParser());
 };
