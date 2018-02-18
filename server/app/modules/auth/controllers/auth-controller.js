@@ -1,20 +1,7 @@
 import pick from 'lodash/pick';
 import { User } from '../../users';
+import { checkCondition } from '../../../utils/error-util';
 import jwtService from '../../../services/jwt-service';
-
-const ERROR_CODE = 400;
-
-/**
- * Function which checks a condition and throws error if condition is false
- * @param ctx Context of function'c call
- * @param condition Condition which will be checked
- * @param message Error message
- */
-function checkCondition(ctx, condition, message) {
-    if (condition) {
-        ctx.throw(ERROR_CODE, { message: message });
-    }
-}
 
 export default {
     async signUp(ctx) {

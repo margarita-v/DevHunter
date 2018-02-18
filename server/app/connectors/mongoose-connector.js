@@ -11,6 +11,6 @@ export default (mongoUri) => {
     return mongoose
         .connect(mongoUri)
         .then(() => {
- console.log('Mongo connected');
-});
+        console.log('Mongo connected');
+    });
 };
