@@ -5,14 +5,14 @@ export default {
     /**
      * Function for a token generation
      */
-    async generateToken(data) {
+    generateToken(data) {
         // JWT function gets object of hashing and string for hashing
-        return await jwt.sign(data, JWT_SECRET_KEY);
+        return jwt.sign(data, JWT_SECRET_KEY);
     },
     /**
      * Function for getting a user by its token
      */
-    async verify(token) {
-        return await jwt.verify(token, JWT_SECRET_KEY);
+    verify(token) {
+        return jwt.verify(token, JWT_SECRET_KEY);
     },
 };

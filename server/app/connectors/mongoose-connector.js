@@ -13,7 +13,8 @@ export default function mongooseConnector(mongoUri) {
     // Use promises because Mongo connection is synchronous
     return mongoose
         .connect(mongoUri)
-        .then(() => {
+        .then((mongoDb) => {
         console.log('Mongo connected');
+        return mongoDb;
     });
 }

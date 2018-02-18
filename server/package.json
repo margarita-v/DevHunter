@@ -7,7 +7,8 @@
     "start": "babel-node app/server",
     "dev": "nodemon --exec 'yarn lint --fix && yarn start'",
     "lint": "eslint app",
-    "lint:fix": "eslint --fix app"
+    "lint:fix": "eslint --fix app",
+    "seed": "babel-node app/seeds"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -18,6 +19,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "eslint": "^4.17.0",
     "eslint-config-google": "^0.9.1",
+    "faker": "^4.1.0",
     "nodemon": "^1.14.12"
   },
   "dependencies": {

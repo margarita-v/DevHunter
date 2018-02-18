@@ -11,6 +11,6 @@ export default async function initConnectors() {
         await mongooseConnector(MONGO_URI);
     } catch (err) {
         server.close();
-        console.log(err);
+        console.error(err);
     }
 }

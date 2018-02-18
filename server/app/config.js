@@ -15,6 +15,10 @@ const PORT = process.env.PORT || config.get('port');
 const MONGO_URI = process.env.MONGO_URI || config.get('mongo.uri');
 const JWT_SECRET_KEY = config.get('jwt.secretKey');
 
+if (!JWT_SECRET_KEY) {
+    throw Error('JWT secret key not found');
+}
+
 export {
     PORT,
     MONGO_URI,
