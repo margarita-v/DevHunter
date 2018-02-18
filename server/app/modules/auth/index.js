@@ -1,15 +1,13 @@
 import Router from 'koa-router';
 import authController from './controllers/auth-controller';
+import checkUser from '../../handlers/check-user';
 
 const router = new Router({ prefix: '/auth' });
 
 router
     .post('/signup', authController.signUp)
     .post('/signin', authController.signIn)
-    .post('/private', (ctx) => {
-        if (!ctx.user) {
-            ctx.throw(403, { message: 'Forbidden' });
-        }
+    .post('/private', checkUser(), (ctx) => {
         ctx.body = ctx.user;
     });
 
