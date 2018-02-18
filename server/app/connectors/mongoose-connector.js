@@ -2,7 +2,10 @@ import mongoose from 'mongoose';
 
 mongoose.Promise = Promise;
 
-export default (mongoUri) => {
+/**
+ * Function for configuration of connection to the MongoDb
+ */
+export default function mongooseConnector(mongoUri) {
     if (!mongoUri) {
         throw Error('Mongo URI is undefined');
     }
@@ -13,4 +16,4 @@ export default (mongoUri) => {
         .then(() => {
         console.log('Mongo connected');
     });
-};
+}

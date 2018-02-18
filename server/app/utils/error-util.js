@@ -12,7 +12,7 @@ function throwError(ctx, errorMessage, errorCode = DEFAULT_ERROR_CODE) {
  */
 function checkCondition(ctx, condition, errorMessage, errorCode = DEFAULT_ERROR_CODE) {
     if (condition) {
-        throwError(ctx, errorCode, errorMessage);
+        throwError(ctx, errorMessage, errorCode);
     }
 }
 

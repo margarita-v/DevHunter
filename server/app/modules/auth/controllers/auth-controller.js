@@ -3,6 +3,9 @@ import { User } from '../../users';
 import { checkCondition } from '../../../utils/error-util';
 import jwtService from '../../../services/jwt-service';
 
+/**
+ * Controller for user's authorization
+ */
 export default {
     async signUp(ctx) {
         const { _id } = await User.create(pick(ctx.request.body, User.createFields));
