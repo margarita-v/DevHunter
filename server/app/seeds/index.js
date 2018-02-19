@@ -2,6 +2,7 @@ import { MONGO_URI } from '../config';
 import mongoose from 'mongoose';
 import mongooseConnector from '../connectors/mongoose-connector';
 import createFakeUsers from './user-seeds';
+import createFakeCv from "./cv-seeds";
 
 initSeeds();
 
@@ -16,8 +17,13 @@ async function initSeeds() {
     const mongoConnection = mongoose.connection;
     await mongoConnection.dropDatabase();
 
-    // Create fake users and close database connection
+    // Create fake users
     const users = await createFakeUsers();
     console.log(users);
+
+    // Create CVs for all users
+    const cvs = await createFakeCv(users);
+    console.log(cvs);
+
     mongoConnection.close();
 }

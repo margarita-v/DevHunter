@@ -1,5 +1,5 @@
 import pick from 'lodash/pick';
-import { User } from '../../users';
+import User from '../../users';
 import { checkCondition } from '../../../utils/error-util';
 import jwtService from '../../../services/jwt-service';
 import UserService from '../../users/services';

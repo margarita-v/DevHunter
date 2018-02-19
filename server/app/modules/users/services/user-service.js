@@ -1,4 +1,4 @@
-import { User } from '../models';
+import User from '../models';
 
 /**
  * Service with common functions for users
