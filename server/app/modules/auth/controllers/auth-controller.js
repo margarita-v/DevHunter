@@ -2,14 +2,16 @@ import pick from 'lodash/pick';
 import { User } from '../../users';
 import { checkCondition } from '../../../utils/error-util';
 import jwtService from '../../../services/jwt-service';
+import UserService from '../../users/services';
 
 /**
  * Controller for user's authorization
  */
 export default {
     async signUp(ctx) {
-        const { _id } = await User.create(pick(ctx.request.body, User.createFields));
-        const user = await User.findOneWithPublicFields({ _id });
+        const userData = pick(ctx.request.body, User.createFields);
+        const { _id } = await UserService.createUser(userData);
+        const user = await UserService.getUserWithPublicFields({ _id });
         ctx.body = { data: user };
     },
     async signIn(ctx) {

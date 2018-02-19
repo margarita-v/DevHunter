@@ -59,20 +59,4 @@ UserSchema.pre('save', function(next) {
    next();
 });
 
-/**
- * Function which returns a user with public fields only.
- */
-UserSchema.statics.findOneWithPublicFields = function(params, cb) {
-    return this
-        .findOne(params, cb)
-        .select({
-            // 0 because we don't need to get values of that fields
-            password: 0,
-            _id: 0,
-            __v: 0,
-            createdAt: 0,
-            updatedAt: 0,
-        });
-};
-
 export default mongoose.model('user', UserSchema);
