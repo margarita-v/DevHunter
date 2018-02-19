@@ -6,21 +6,25 @@ mongoose.plugin(uniqueValidator);
 
 const UserSchema = new Schema({
    email: {
+       trim: true,
        type: String,
        unique: 'User with email "{VALUE}" already exists',
        lowercase: true,
        required: 'Email is required',
    },
    password: {
+       trim: true,
        type: String,
        required: 'Password is required',
    },
    firstName: {
+       trim: true,
        type: String,
        lowercase: true,
        required: 'First name is required',
    },
    lastName: {
+       trim: true,
        type: String,
        lowercase: true,
        required: 'Last name is required',
