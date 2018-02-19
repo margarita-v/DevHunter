@@ -4,6 +4,9 @@ import { Cv } from '../modules/curriculum-vitae';
 const MAX_TAGS_COUNT = 4;
 
 export default function createFakeCv(users) {
+    if (!users || !users.length) {
+        throw Error('Users are required');
+    }
     const promises = [];
     users.forEach((user) => {
         const cvPromise = Cv.create({
@@ -16,4 +19,4 @@ export default function createFakeCv(users) {
         promises.push(cvPromise);
     });
     return Promise.all(promises);
-};
+}

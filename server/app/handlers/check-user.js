@@ -1,6 +1,5 @@
 import { checkCondition } from '../utils/error-util';
-
-const FORBIDDEN_ERROR_CODE = 403;
+import {FORBIDDEN_ERROR_CODE} from '../utils/status-codes';
 
 export default function checkUser() {
     return async (ctx, next) => {

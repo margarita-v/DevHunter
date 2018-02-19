@@ -1,4 +1,4 @@
-const DEFAULT_ERROR_CODE = 400;
+import {DEFAULT_ERROR_CODE} from './status-codes';
 
 /**
  * Function for throwing error with given params

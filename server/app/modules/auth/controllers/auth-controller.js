@@ -3,6 +3,7 @@ import User from '../../users';
 import { checkCondition } from '../../../utils/error-util';
 import jwtService from '../../../services/jwt-service';
 import UserService from '../../users/services';
+import {CREATED_STATUS_CODE} from '../../../utils/status-codes';
 
 /**
  * Controller for user's authorization
@@ -12,6 +13,7 @@ export default {
         const userData = pick(ctx.request.body, User.createFields);
         const { _id } = await UserService.createUser(userData);
         const user = await UserService.getUserWithPublicFields({ _id });
+        ctx.status = CREATED_STATUS_CODE;
         ctx.body = { data: user };
     },
     async signIn(ctx) {
