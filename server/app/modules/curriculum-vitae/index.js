@@ -6,7 +6,8 @@ import cvController from './controllers/cv-controller';
 const router = new Router({ prefix: '/cv' });
 
 router
-    .post('/', checkUser(), cvController.create);
+    .post('/', checkUser(), cvController.create)
+    .put('/:id', checkUser(), cvController.update);
 
 export {
     Cv,

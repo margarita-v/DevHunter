@@ -12,8 +12,6 @@ export default {
 
     /**
      * Function for creation of CV
-     * @param data
-     * @returns {Promise.<data>} Promise for CV creation
      */
     async createCv(data) {
         // For getting a count of the current user's CVs
@@ -23,5 +21,13 @@ export default {
             throw Error(`User can not create over ${MAX_CV_COUNT} CVs`);
         }
         return Cv.create(data);
+    },
+
+    /**
+     * Function for updating of CV
+     */
+    async updateCv(data, cv) {
+        cv.set(data);
+        return cv.save();
     },
 };

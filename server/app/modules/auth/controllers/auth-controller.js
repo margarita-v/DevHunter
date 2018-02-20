@@ -3,7 +3,7 @@ import User from '../../users';
 import { checkCondition } from '../../../utils/error-util';
 import jwtService from '../../../services/jwt-service';
 import UserService from '../../users/services';
-import {CREATED_STATUS_CODE} from '../../../utils/status-codes';
+import {CREATED_STATUS_CODE, NOT_FOUND_ERROR_CODE} from '../../../utils/status-codes';
 
 /**
  * Controller for user's authorization
@@ -21,7 +21,7 @@ export default {
         checkCondition(ctx, !email || !password, 'Invalid data');
 
         const user = await User.findOne({ email });
-        checkCondition(ctx, !user, 'User not found');
+        checkCondition(ctx, !user, 'User not found', NOT_FOUND_ERROR_CODE);
 
         // Check user's password
         checkCondition(ctx, !user.comparePasswords(password), 'Invalid password');
