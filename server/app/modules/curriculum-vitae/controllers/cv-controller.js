@@ -1,7 +1,7 @@
 import pick from 'lodash/pick';
 import Cv from '../models';
 import CvService from '../services';
-import {checkCondition, throwError} from '../../../utils/common-utils';
+import {checkCondition} from '../../../utils/common-utils';
 import {
     CREATED_STATUS_CODE,
     FORBIDDEN_ERROR_CODE,
@@ -22,14 +22,11 @@ export default {
             ...pick(ctx.request.body, Cv.createFields),
             userId: ctx.user._id,
         };
-        try {
-            const {_id} = await CvService.createCv(cvData);
-            const cv = await Cv.findOne({_id});
-            ctx.status = CREATED_STATUS_CODE;
-            ctx.body = {data: cv};
-        } catch (err) {
-            throwError(ctx, err.message);
-        }
+
+        const { _id } = await CvService.createCv(cvData);
+        const cv = await Cv.findOne({ _id });
+        ctx.status = CREATED_STATUS_CODE;
+        ctx.body = { data: cv };
     },
 
     /**

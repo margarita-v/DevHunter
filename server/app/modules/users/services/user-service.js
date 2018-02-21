@@ -1,4 +1,5 @@
 import User from '../models';
+import AppError from '../../../helpers/error';
 
 /**
  * Service with common functions for users
@@ -9,8 +10,12 @@ export default {
      * Function for creation of user
      * @returns {data} Promise for user's creation
      */
-    createUser(data) {
-        return User.create(data);
+    async createUser(data) {
+        try {
+            return await User.create(data);
+        } catch (err) {
+            throw new AppError({ ...err });
+        }
     },
 
     /**

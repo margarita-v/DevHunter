@@ -18,7 +18,7 @@ export default {
         const { userId } = data;
         const cvCount = await Cv.count({ userId });
         if (cvCount === MAX_CV_COUNT) {
-            throw Error(`User can not create over ${MAX_CV_COUNT} CVs`);
+            throw new AppError({ message: `User can not create over ${MAX_CV_COUNT} CVs` });
         }
         return Cv.create(data);
     },
