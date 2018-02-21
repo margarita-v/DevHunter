@@ -1,7 +1,7 @@
 import pick from 'lodash/pick';
 import Cv from '../models';
 import CvService from '../services';
-import {checkCondition, throwError} from '../../../utils/error-util';
+import {checkCondition, throwError} from '../../../utils/common-utils';
 import {
     CREATED_STATUS_CODE,
     FORBIDDEN_ERROR_CODE,
@@ -48,22 +48,50 @@ export default {
             },
         } = ctx;
 
-        const cv = await Cv.findOne({ _id });
-        const cvString = `CV with id ${_id}`;
-        checkCondition(ctx, !cv, `${cvString} not found`, NOT_FOUND_ERROR_CODE);
-
-        // Check if the CV belongs to the current user.
-        // We should convert userId to Hex string because it is a mongoose object (object id)
-        checkCondition(
-            ctx,
-            cv.userId !== userId.toHexString(),
-            `${cvString} not belongs to user ${userId}`,
-            FORBIDDEN_ERROR_CODE);
-
+        const cv = await getCv(ctx, _id, userId);
         const newData = pick(body, Cv.createFields);
         const updatedCv = await CvService.updateCv(newData, cv);
 
         ctx.status = UPDATED_STATUS_CODE;
         ctx.body = { data: updatedCv };
     },
+
+    /**
+     * Function for CV removing
+     */
+    async delete(ctx) {
+        const {
+            params: {
+                id: _id,
+            },
+            user: {
+                _id: userId,
+            },
+        } = ctx;
+
+        const cv = await getCv(ctx, _id, userId);
+        await cv.remove();
+
+        ctx.status = UPDATED_STATUS_CODE;
+        ctx.body = { data: { id: _id }};
+    },
 };
+
+/**
+ * Function for getting CV by id with checking for its owner
+ */
+async function getCv(ctx, _id, userId) {
+    const cv = await Cv.findOne({ _id });
+    const cvString = `CV with id ${_id}`;
+    checkCondition(ctx, !cv, `${cvString} not found`, NOT_FOUND_ERROR_CODE);
+
+    // Check if the CV belongs to the current user.
+    // We should convert userId to Hex string because it is a mongoose object (object id)
+    checkCondition(
+        ctx,
+        cv.userId !== userId.toHexString(),
+        `${cvString} not belongs to user ${userId}`,
+        FORBIDDEN_ERROR_CODE);
+
+    return cv;
+}

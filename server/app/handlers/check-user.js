@@ -1,4 +1,4 @@
-import { checkCondition } from '../utils/error-util';
+import { checkCondition } from '../utils/common-utils';
 import {FORBIDDEN_ERROR_CODE} from '../utils/status-codes';
 
 export default function checkUser() {

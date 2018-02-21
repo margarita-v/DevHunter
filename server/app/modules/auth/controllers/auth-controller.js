@@ -1,6 +1,6 @@
 import pick from 'lodash/pick';
 import User from '../../users';
-import { checkCondition } from '../../../utils/error-util';
+import { checkCondition } from '../../../utils/common-utils';
 import jwtService from '../../../services/jwt-service';
 import UserService from '../../users/services';
 import {CREATED_STATUS_CODE, NOT_FOUND_ERROR_CODE} from '../../../utils/status-codes';

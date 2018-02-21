@@ -1,6 +1,6 @@
 import jwtService from '../services/jwt-service';
 import User from '../modules/users';
-import { throwError } from '../utils/error-util';
+import { throwError } from '../utils/common-utils';
 import {AUTH_ERROR_CODE} from '../utils/status-codes';
 
 /**
