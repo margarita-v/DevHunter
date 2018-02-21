@@ -1,12 +1,11 @@
 import pick from 'lodash/pick';
 import Cv from '../models';
 import CvService from '../services';
-import {checkCondition} from '../../../utils/common-utils';
+import {checkCondition, returnData} from '../../../utils/common-utils';
 import {
     CREATED_STATUS_CODE,
     FORBIDDEN_ERROR_CODE,
     NOT_FOUND_ERROR_CODE,
-    UPDATED_STATUS_CODE,
 } from '../../../utils/status-codes';
 
 /**
@@ -25,8 +24,7 @@ export default {
 
         const { _id } = await CvService.createCv(cvData);
         const cv = await Cv.findOne({ _id });
-        ctx.status = CREATED_STATUS_CODE;
-        ctx.body = { data: cv };
+        returnData(ctx, cv, CREATED_STATUS_CODE);
     },
 
     /**
@@ -48,9 +46,7 @@ export default {
         const cv = await getCv(ctx, _id, userId);
         const newData = pick(body, Cv.createFields);
         const updatedCv = await CvService.updateCv(newData, cv);
-
-        ctx.status = UPDATED_STATUS_CODE;
-        ctx.body = { data: updatedCv };
+        returnData(ctx, updatedCv);
     },
 
     /**
@@ -68,9 +64,7 @@ export default {
 
         const cv = await getCv(ctx, _id, userId);
         await cv.remove();
-
-        ctx.status = UPDATED_STATUS_CODE;
-        ctx.body = { data: { id: _id }};
+        returnData(ctx, { id: _id });
     },
 };
 

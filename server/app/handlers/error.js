@@ -1,4 +1,5 @@
 import {DEFAULT_ERROR_CODE, SERVER_ERROR_CODE} from '../utils/status-codes';
+import {returnResult} from '../utils/common-utils';
 
 /**
  * Function for handling server errors
@@ -10,17 +11,17 @@ export default function handleServerError() {
         } catch ({ status = SERVER_ERROR_CODE, message = 'Server error', name, errors}) {
             // Mongoose validation error
             if (name === 'ValidationError') {
-                ctx.status = DEFAULT_ERROR_CODE;
-                ctx.body = {
-                    errors: Object.values(errors)
-                        .reduce((errors, error) => ({
-                            ...errors,
-                            [error.path]: error.message,
-                        }), {}),
-                };
+                returnResult(ctx, {
+                        errors: Object.values(errors)
+                            .reduce((errors, error) => ({
+                                ...errors,
+                                [error.path]: error.message,
+                            }), {}),
+                    },
+                    DEFAULT_ERROR_CODE
+                );
             } else {
-                ctx.status = status;
-                ctx.body = { status, message };
+                returnResult(ctx, { status, message }, status);
             }
         }
     };
