@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import Cv from './models';
-import checkUser from '../users/handlers/check-user';
+import {checkUser} from '../users/handlers/user-handlers';
 import cvController from './controllers/cv-controller';
 
 const router = new Router({ prefix: '/cv' });

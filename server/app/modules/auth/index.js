@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import authController from './controllers/auth-controller';
-import checkUser from '../users/handlers/check-user';
+import {checkUser} from '../users/handlers/user-handlers';
 import {returnResult} from '../../utils/common-utils';
 
 const router = new Router({ prefix: '/auth' });
