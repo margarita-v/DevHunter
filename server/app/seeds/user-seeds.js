@@ -2,7 +2,7 @@ import faker from 'faker';
 import _ from 'lodash';
 import User from '../modules/users';
 
-const COUNT_OF_USERS = 20;
+const COUNT_OF_USERS = 500;
 
 export default function createFakeUsers() {
     const promises = [];

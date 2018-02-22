@@ -19,12 +19,15 @@ async function initSeeds() {
 
     try {
         // Create fake users
+        console.log('Creation of fake users was started...');
         const users = await createFakeUsers();
-        console.log(users);
+        console.log(`${users.length} users were created.`);
 
         // Create CVs for all users
+        console.log('Creation of fake CVs was started...');
         const cvs = await createFakeCv(users);
-        console.log(cvs);
+        console.log(`${cvs.length} CVs were created.`);
+
     } catch (err) {
         console.error(err);
     } finally {

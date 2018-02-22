@@ -1,3 +1,4 @@
+import uuid from 'uuid/v4';
 import mongoose, { Schema } from 'mongoose';
 
 const CvSchema = new Schema({
@@ -59,6 +60,10 @@ const CvSchema = new Schema({
             default: false,
         },
     }],
+    hash: {
+        type: String,
+        unique: 'Hash must be unique',
+    },
 });
 
 /**
@@ -66,5 +71,16 @@ const CvSchema = new Schema({
  */
 CvSchema.statics.createFields =
     ['title', 'description', 'tags', 'phone', 'skype', 'jobHistory'];
+
+/**
+ * Handler for a CV creation
+ */
+CvSchema.pre('save', function(next) {
+    if (!this.hash) {
+        this.hash = uuid();
+    }
+    next();
+});
+
 
 export default mongoose.model('cv', CvSchema);

@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import uuid from 'uuid/v4';
 import bcrypt from 'bcrypt';
 import uniqueValidator from 'mongoose-unique-validator';
 
@@ -29,6 +30,10 @@ const UserSchema = new Schema({
        lowercase: true,
        required: 'Last name is required',
    },
+   hash: {
+      type: String,
+       unique: 'Hash must be unique',
+   },
 }, {
     // Mongoose will automatically add fields createdAt and updatedAt
     timestamps: true,
@@ -50,12 +55,15 @@ UserSchema.methods.comparePasswords = function(password) {
  * Handler for a user creation
  */
 UserSchema.pre('save', function(next) {
-   if (!this.isModified('password')) {
-       return next();
+   if (this.isModified('password')) {
+       const salt = bcrypt.genSaltSync(10);
+       this.password = bcrypt.hashSync(this.password, salt);
    }
 
-   const salt = bcrypt.genSaltSync(10);
-   this.password = bcrypt.hashSync(this.password, salt);
+   if (!this.hash) {
+       this.hash = uuid();
+   }
+
    next();
 });
 
