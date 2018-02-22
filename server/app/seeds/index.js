@@ -27,7 +27,6 @@ async function initSeeds() {
         console.log('Creation of fake CVs was started...');
         const cvs = await createFakeCv(users);
         console.log(`${cvs.length} CVs were created.`);
-
     } catch (err) {
         console.error(err);
     } finally {

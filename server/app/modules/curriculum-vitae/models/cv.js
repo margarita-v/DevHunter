@@ -6,6 +6,10 @@ const CvSchema = new Schema({
         type: String,
         required: 'User ID is required',
     },
+    hash: {
+        type: String,
+        unique: 'Hash must be unique',
+    },
     title: {
         trim: true,
         type: String,
@@ -60,17 +64,13 @@ const CvSchema = new Schema({
             default: false,
         },
     }],
-    hash: {
-        type: String,
-        unique: 'Hash must be unique',
-    },
 });
 
 /**
  * Static parameters for a model which will return an array of fields for a CV creation
  */
 CvSchema.statics.createFields =
-    ['title', 'description', 'tags', 'phone', 'skype', 'jobHistory'];
+    ['hash', 'title', 'description', 'tags', 'phone', 'skype', 'jobHistory'];
 
 /**
  * Handler for a CV creation

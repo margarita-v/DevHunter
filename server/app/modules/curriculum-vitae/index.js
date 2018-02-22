@@ -7,8 +7,9 @@ const router = new Router({ prefix: '/cv' });
 
 router
     .post('/', checkUser(), cvController.create)
-    .put('/:id', checkUser(), cvController.update)
-    .delete('/:id', checkUser(), cvController.delete);
+    .get('/:hash', checkUser(), cvController.get)
+    .put('/:hash', checkUser(), cvController.update)
+    .delete('/:hash', checkUser(), cvController.delete);
 
 export {
     Cv,
