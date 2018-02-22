@@ -19,7 +19,7 @@ export default {
     async create(ctx) {
         const cvData = {
             ...pick(ctx.request.body, Cv.createFields),
-            userId: ctx.user._id,
+            userHash: ctx.user.hash,
         };
 
         const { _id } = await CvService.createCv(cvData);
@@ -61,32 +61,26 @@ export default {
 async function getCvParams(ctx) {
     const {
         params: {
-            hash: hash,
+            hash,
         },
         request: {
             body,
         },
         user: {
-            _id: userId,
+            hash: userHash,
         },
     } = ctx;
 
     const cv = await Cv.findOne({ hash });
     const cvString = `CV with hash ${ hash }`;
-    checkCondition(ctx, !cv, `${cvString} not found`, NOT_FOUND_ERROR_CODE);
+    checkCondition(ctx, !cv, `${ cvString } not found`, NOT_FOUND_ERROR_CODE);
 
     // Check if the CV belongs to the current user.
-    // We should convert userId to Hex string because it is a mongoose object (object id)
     checkCondition(
         ctx,
-        cv.userId !== userId.toHexString(),
-        `${cvString} not belongs to user ${userId}`,
+        cv.userHash !== userHash,
+        `${ cvString } not belongs to user ${userHash}`,
         FORBIDDEN_ERROR_CODE);
 
-    return {
-        cv: cv,
-        body: body,
-        hash: hash,
-        userId: userId,
-    };
+    return { cv, body, hash, userHash };
 }

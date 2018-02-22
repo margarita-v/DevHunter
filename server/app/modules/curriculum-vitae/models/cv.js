@@ -2,9 +2,9 @@ import uuid from 'uuid/v4';
 import mongoose, { Schema } from 'mongoose';
 
 const CvSchema = new Schema({
-    userId: {
+    userHash: {
         type: String,
-        required: 'User ID is required',
+        required: 'User hash is required',
     },
     hash: {
         type: String,

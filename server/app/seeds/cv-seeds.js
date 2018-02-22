@@ -10,7 +10,7 @@ export default function createFakeCv(users) {
     const promises = [];
     users.forEach((user) => {
         const cvPromise = Cv.create({
-            userId: user._id,
+            userHash: user.hash,
             title: faker.name.jobType(),
             description: faker.name.jobArea(),
             phone: faker.phone.phoneNumber(),
