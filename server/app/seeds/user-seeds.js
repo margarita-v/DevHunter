@@ -1,6 +1,6 @@
 import faker from 'faker';
 import _ from 'lodash';
-import User from '../modules/users';
+import {User} from '../modules/users';
 
 const COUNT_OF_USERS = 500;
 
