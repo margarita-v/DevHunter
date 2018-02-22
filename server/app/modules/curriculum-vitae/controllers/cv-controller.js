@@ -31,38 +31,17 @@ export default {
      * Function for getting a CV
      */
     async get(ctx) {
-        const {
-            params: {
-                hash: hash,
-            },
-            user: {
-                _id: userId,
-            },
-        } = ctx;
-
-        const cv = await getCv(ctx, hash, userId);
-        returnData(ctx, pick(cv, Cv.createFields));
+        const cvParams = await getCvParams(ctx);
+        returnData(ctx, pick(cvParams.cv, Cv.createFields));
     },
 
     /**
      * Function for CV updating
      */
     async update(ctx) {
-        const {
-            params: {
-                hash: hash,
-            },
-            request: {
-                body,
-            },
-            user: {
-                _id: userId,
-            },
-        } = ctx;
-
-        const cv = await getCv(ctx, hash, userId);
-        const newData = pick(body, Cv.createFields);
-        const updatedCv = await CvService.updateCv(newData, cv);
+        const cvParams = await getCvParams(ctx);
+        const newData = pick(cvParams.body, Cv.createFields);
+        const updatedCv = await CvService.updateCv(newData, cvParams.cv);
         returnData(ctx, updatedCv);
     },
 
@@ -70,25 +49,28 @@ export default {
      * Function for CV removing
      */
     async delete(ctx) {
-        const {
-            params: {
-                hash: hash,
-            },
-            user: {
-                _id: userId,
-            },
-        } = ctx;
-
-        const cv = await getCv(ctx, hash, userId);
-        await cv.remove();
-        returnData(ctx, { hash: hash });
+        const cvParams = await getCvParams(ctx);
+        await cvParams.cv.remove();
+        returnData(ctx, { hash: cvParams.hash });
     },
 };
 
 /**
- * Function for getting CV by id with checking for its owner
+ * Function for getting CV params by id with checking for its owner
  */
-async function getCv(ctx, hash, userId) {
+async function getCvParams(ctx) {
+    const {
+        params: {
+            hash: hash,
+        },
+        request: {
+            body,
+        },
+        user: {
+            _id: userId,
+        },
+    } = ctx;
+
     const cv = await Cv.findOne({ hash });
     const cvString = `CV with hash ${ hash }`;
     checkCondition(ctx, !cv, `${cvString} not found`, NOT_FOUND_ERROR_CODE);
@@ -101,5 +83,10 @@ async function getCv(ctx, hash, userId) {
         `${cvString} not belongs to user ${userId}`,
         FORBIDDEN_ERROR_CODE);
 
-    return cv;
+    return {
+        cv: cv,
+        body: body,
+        hash: hash,
+        userId: userId,
+    };
 }

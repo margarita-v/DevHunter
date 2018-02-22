@@ -1,4 +1,5 @@
 import Cv from '../models';
+import AppError from '../../../helpers/error';
 
 /**
  * Max count of CVs for the one user
@@ -28,6 +29,10 @@ export default {
      */
     async updateCv(data, cv) {
         cv.set(data);
-        return cv.save();
+        try {
+            return cv.save();
+        } catch (err) {
+            throw new AppError({ ...err });
+        }
     },
 };
