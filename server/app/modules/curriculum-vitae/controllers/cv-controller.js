@@ -1,7 +1,7 @@
 import pick from 'lodash/pick';
 import Cv from '../models';
 import CvService from '../services';
-import {checkCondition, returnData} from '../../../utils/common-utils';
+import {checkCondition, returnData, returnResult} from '../../../utils/common-utils';
 import {
     CREATED_STATUS_CODE,
     FORBIDDEN_ERROR_CODE,
@@ -52,6 +52,32 @@ export default {
         const cvParams = await getCvParams(ctx);
         await cvParams.cv.remove();
         returnData(ctx, { hash: cvParams.hash });
+    },
+
+    /**
+     * Function for searching of CVs
+     */
+    async search(ctx) {
+        const MAX_COUNT_OF_RESPONSE_ITEMS = 20;
+        const PAGE_NUMBER = 1;
+        const queryParams = pick(ctx.request.query, Cv.searchFields);
+        const filter = {
+            title: queryParams.title ? queryParams.title : '',
+            tags: queryParams.tags ? queryParams.tags.split(',') : [],
+            size: parseInt(queryParams.size),
+            page: parseInt(queryParams.page),
+        };
+
+        if (!filter.size || filter.size > MAX_COUNT_OF_RESPONSE_ITEMS) {
+            filter.size = MAX_COUNT_OF_RESPONSE_ITEMS;
+        }
+
+        if (!filter.page) {
+            filter.page = PAGE_NUMBER;
+        }
+
+        const { cvList, ...rest } = await CvService.search(filter);
+        returnResult(ctx, { data: cvList, filter, ...rest });
     },
 };
 

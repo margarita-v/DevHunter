@@ -6,6 +6,7 @@ import cvController from './controllers/cv-controller';
 const router = new Router({ prefix: '/cv' });
 
 router
+    .get('/', cvController.search)
     .post('/', checkUser(), cvController.create)
     .get('/:hash', checkUser(), cvController.get)
     .put('/:hash', checkUser(), cvController.update)

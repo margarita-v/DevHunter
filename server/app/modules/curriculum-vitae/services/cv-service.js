@@ -27,12 +27,44 @@ export default {
     /**
      * Function for updating of CV
      */
-    async updateCv(data, cv) {
+    updateCv(data, cv) {
         cv.set(data);
         try {
             return cv.save();
         } catch (err) {
             throw new AppError({ ...err });
         }
+    },
+
+    /**
+     * Function for searching of CVs
+     */
+    async search({ title, tags, size, page }) {
+        const query = {
+            title: {
+                $regex: title,
+            },
+        };
+        const sortObject = { updatedAt: '-1' };
+
+        if (tags.length) {
+            query.tags = { $in: tags };
+        }
+
+        // Count of all CVs for the current query
+        const cvCount = await Cv
+            .count(query)
+            .sort(sortObject);
+        const pagesCount = Math.ceil(cvCount / size);
+
+        // List of response items
+        const cvList = await Cv
+            .find(query)
+            .sort(sortObject)
+            // Count of items which will be get from the database
+            .limit(size)
+            .skip((page - 1) * size);
+
+        return { cvList, cvCount, pagesCount, page };
     },
 };

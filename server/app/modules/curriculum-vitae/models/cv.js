@@ -75,6 +75,11 @@ CvSchema.statics.createFields =
     ['hash', 'title', 'description', 'tags', 'phone', 'skype', 'jobHistory'];
 
 /**
+ * Static parameters for searching of CVs
+ */
+CvSchema.statics.searchFields = ['title', 'tags', 'size', 'page'];
+
+/**
  * Handler for a CV creation
  */
 CvSchema.pre('save', function(next) {
