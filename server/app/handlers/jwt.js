@@ -12,7 +12,7 @@ export default function verifyUser() {
         if (authorization) {
             try {
                 const { email } = await jwtService.verify(authorization);
-                ctx.user = await User.findOne({ email });
+                ctx.state.user = await User.findOne({ email });
             } catch (err) {
                 throwError(ctx, 'Invalid token', AUTH_ERROR_CODE);
             }

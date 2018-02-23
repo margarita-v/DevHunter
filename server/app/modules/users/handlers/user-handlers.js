@@ -8,7 +8,7 @@ import {FORBIDDEN_ERROR_CODE, NOT_FOUND_ERROR_CODE} from '../../../utils/status-
  */
 function checkUser() {
     return async (ctx, next) => {
-        checkCondition(ctx, !ctx.user, 'Forbidden', FORBIDDEN_ERROR_CODE);
+        checkCondition(ctx, !ctx.state.user, 'Forbidden', FORBIDDEN_ERROR_CODE);
         await next();
     };
 }
@@ -20,7 +20,7 @@ function findUserByHash() {
     return async (hash, ctx, next) => {
         const user = await User.findOne({ hash });
         checkCondition(ctx, !user, `User with hash ${hash} not found`, NOT_FOUND_ERROR_CODE);
-        ctx.user = user;
+        ctx.state.user = user;
         await next();
     };
 }

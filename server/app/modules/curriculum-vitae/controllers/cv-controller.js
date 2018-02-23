@@ -19,7 +19,7 @@ export default {
     async create(ctx) {
         const cvData = {
             ...pick(ctx.request.body, Cv.createFields),
-            userHash: ctx.user.hash,
+            userHash: ctx.state.user.hash,
         };
 
         const { _id } = await CvService.createCv(cvData);
@@ -66,8 +66,10 @@ async function getCvParams(ctx) {
         request: {
             body,
         },
-        user: {
-            hash: userHash,
+        state: {
+            user: {
+                hash: userHash,
+            },
         },
     } = ctx;
 

@@ -9,12 +9,14 @@ import {CREATED_STATUS_CODE, NOT_FOUND_ERROR_CODE} from '../../../utils/status-c
  * Controller for user's authorization
  */
 export default {
+
     async signUp(ctx) {
         const userData = pick(ctx.request.body, User.createFields);
         const { _id } = await UserService.createUser(userData);
         const user = await UserService.getUserWithPublicFields({ _id });
         returnData(ctx, user, CREATED_STATUS_CODE);
     },
+
     async signIn(ctx) {
         const { email, password } = ctx.request.body;
         checkCondition(ctx, !email || !password, 'Invalid data');
@@ -28,5 +30,15 @@ export default {
         // Return generated token to the user
         const token = await jwtService.generateToken({ email });
         returnData(ctx, token);
+    },
+
+    async getCurrentUser(ctx) {
+        const {
+            state: {
+                user: { _id },
+            },
+        } = ctx;
+        const user = await UserService.getUserWithPublicFields({ _id });
+        returnData(ctx, user);
     },
 };
