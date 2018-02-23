@@ -3,7 +3,7 @@ import {User} from '../../users';
 import {checkCondition, returnData} from '../../../utils/common-utils';
 import jwtService from '../../../services/jwt-service';
 import UserService from '../../users/services';
-import {CREATED_STATUS_CODE, NOT_FOUND_ERROR_CODE} from '../../../utils/status-codes';
+import {CREATED_STATUS_CODE, NOT_FOUND_ERROR_CODE} from '../../../constants/status-codes';
 
 /**
  * Controller for user's authorization

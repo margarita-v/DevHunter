@@ -1,4 +1,4 @@
-import {DEFAULT_ERROR_CODE, SERVER_ERROR_CODE} from '../utils/status-codes';
+import {DEFAULT_ERROR_CODE, SERVER_ERROR_CODE} from '../constants/status-codes';
 import {returnResult} from '../utils/common-utils';
 
 /**

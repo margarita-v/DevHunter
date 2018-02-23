@@ -1,6 +1,6 @@
 import User from '../models';
 import {checkCondition} from '../../../utils/common-utils';
-import {FORBIDDEN_ERROR_CODE, NOT_FOUND_ERROR_CODE} from '../../../utils/status-codes';
+import {FORBIDDEN_ERROR_CODE, NOT_FOUND_ERROR_CODE} from '../../../constants/status-codes';
 
 /**
  * Function which checks if the context of function call contains

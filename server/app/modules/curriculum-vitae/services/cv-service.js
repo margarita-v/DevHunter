@@ -57,6 +57,10 @@ export default {
             .sort(sortObject);
         const pagesCount = Math.ceil(cvCount / size);
 
+        if (page > pagesCount) {
+            page = pagesCount;
+        }
+
         // List of response items
         const cvList = await Cv
             .find(query)

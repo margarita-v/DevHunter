@@ -1,7 +1,7 @@
 import jwtService from '../services/jwt-service';
 import {User} from '../modules/users';
 import {throwError} from '../utils/common-utils';
-import {AUTH_ERROR_CODE} from '../utils/status-codes';
+import {AUTH_ERROR_CODE} from '../constants/status-codes';
 
 /**
  * Function for user's verification by its token

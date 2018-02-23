@@ -6,7 +6,8 @@ import {
     CREATED_STATUS_CODE,
     FORBIDDEN_ERROR_CODE,
     NOT_FOUND_ERROR_CODE,
-} from '../../../utils/status-codes';
+} from '../../../constants/status-codes';
+import parseSearchQuery from '../helpers/parse-search-query';
 
 /**
  * Controller for CV manipulation
@@ -58,24 +59,8 @@ export default {
      * Function for searching of CVs
      */
     async search(ctx) {
-        const MAX_COUNT_OF_RESPONSE_ITEMS = 20;
-        const PAGE_NUMBER = 1;
         const queryParams = pick(ctx.request.query, Cv.searchFields);
-        const filter = {
-            title: queryParams.title ? queryParams.title : '',
-            tags: queryParams.tags ? queryParams.tags.split(',') : [],
-            size: parseInt(queryParams.size),
-            page: parseInt(queryParams.page),
-        };
-
-        if (!filter.size || filter.size > MAX_COUNT_OF_RESPONSE_ITEMS) {
-            filter.size = MAX_COUNT_OF_RESPONSE_ITEMS;
-        }
-
-        if (!filter.page) {
-            filter.page = PAGE_NUMBER;
-        }
-
+        const filter = parseSearchQuery(queryParams);
         const { cvList, ...rest } = await CvService.search(filter);
         returnResult(ctx, { data: cvList, filter, ...rest });
     },

@@ -1,4 +1,4 @@
-import {DEFAULT_ERROR_CODE, OK_STATUS_CODE} from './status-codes';
+import {DEFAULT_ERROR_CODE, OK_STATUS_CODE} from '../constants/status-codes';
 
 /**
  * Function for throwing error with given params
