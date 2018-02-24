@@ -4,7 +4,9 @@ import AppError from '../../../helpers/error';
 /**
  * Max count of CVs for the one user
  */
-const MAX_CV_COUNT = 3;
+export const MAX_CV_COUNT = 3;
+
+export const CREATE_CV_ERROR_MESSAGE = `User can not create over ${MAX_CV_COUNT} CVs`;
 
 /**
  * Service with common functions for CVs
@@ -19,7 +21,7 @@ export default {
         const { userHash } = data;
         const cvCount = await Cv.count({ userHash });
         if (cvCount === MAX_CV_COUNT) {
-            throw new AppError({ message: `User can not create over ${MAX_CV_COUNT} CVs` });
+            throw new AppError({ message: CREATE_CV_ERROR_MESSAGE });
         }
         return Cv.create(data);
     },
