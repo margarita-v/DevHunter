@@ -1,9 +1,11 @@
 import config from 'config';
 import dotenv from 'dotenv';
 import envs from './constants/envs';
-import env from './utils/env';
+import env, {IS_TEST} from './utils/env';
 
-dotenv.config();
+if (!IS_TEST) {
+    dotenv.config();
+}
 
 // Check if the given environment does not exist
 if (!envs[env]) {

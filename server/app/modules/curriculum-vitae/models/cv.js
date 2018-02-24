@@ -72,7 +72,7 @@ const CvSchema = new Schema({
  * Static parameters for a model which will return an array of fields for a CV creation
  */
 CvSchema.statics.createFields =
-    ['hash', 'title', 'description', 'tags', 'phone', 'skype', 'jobHistory'];
+    ['title', 'description', 'tags', 'phone', 'skype', 'jobHistory'];
 
 /**
  * Static parameters for searching of CVs
