@@ -1,18 +1,11 @@
-import parseSearchQuery from "../helpers/parse-search-query";
-import {MAX_COUNT_OF_RESPONSE_ITEMS, PAGE_NUMBER} from "../constants/pagination";
-
-const EMPTY_RESULT = {
-    title: '',
-    tags: [],
-    size: MAX_COUNT_OF_RESPONSE_ITEMS,
-    page: PAGE_NUMBER,
-};
+import parseSearchQuery, {DEFAULT_FILTER} from "../helpers/parse-search-query";
+import {MAX_COUNT_OF_RESPONSE_ITEMS} from "../constants/pagination";
 
 describe('Tests for the function of parsing a query for search', () => {
 
     it('Correct parsing of query for search for invalid params', () => {
         const result = parseSearchQuery({ fakeParam: 'value' });
-        expect(result).toEqual(EMPTY_RESULT);
+        expect(result).toEqual(DEFAULT_FILTER);
     });
 
     it('Correct parsing of valid query for search', () => {
@@ -36,6 +29,6 @@ describe('Tests for the function of parsing a query for search', () => {
             size: MAX_COUNT_OF_RESPONSE_ITEMS * 2,
             page: 'invalid',
         });
-        expect(result).toEqual(EMPTY_RESULT);
+        expect(result).toEqual(DEFAULT_FILTER);
     })
 });

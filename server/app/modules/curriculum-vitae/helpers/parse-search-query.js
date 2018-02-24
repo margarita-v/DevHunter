@@ -1,5 +1,12 @@
 import {MAX_COUNT_OF_RESPONSE_ITEMS, PAGE_NUMBER} from '../constants/pagination';
 
+export const DEFAULT_FILTER = {
+    title: '',
+    tags: [],
+    size: MAX_COUNT_OF_RESPONSE_ITEMS,
+    page: PAGE_NUMBER,
+};
+
 /**
  * Function which returns a correct filter for searching of CV
  */

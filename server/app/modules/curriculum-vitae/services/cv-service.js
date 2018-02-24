@@ -44,7 +44,8 @@ export default {
     async search({ title, tags, size, page }) {
         const query = {
             title: {
-                $regex: title,
+                // For performing a case insensitive searching
+                $regex: new RegExp(title, 'ig'),
             },
         };
         const sortObject = { updatedAt: '-1' };
@@ -59,7 +60,7 @@ export default {
             .sort(sortObject);
         const pagesCount = Math.ceil(cvCount / size);
 
-        if (page > pagesCount) {
+        if (pagesCount > 0 && page > pagesCount) {
             page = pagesCount;
         }
 
@@ -71,6 +72,6 @@ export default {
             .limit(size)
             .skip((page - 1) * size);
 
-        return { cvList, cvCount, pagesCount, page };
+        return { cvList, cvCount, pagesCount, };
     },
 };
