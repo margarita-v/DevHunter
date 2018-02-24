@@ -1,4 +1,4 @@
-import {closeAndDropDb} from "../../../utils/mongo-utils";
+import {closeAndDropDb, dropDb} from "../../../utils/mongo-utils";
 import server from "../../../server";
 import supertest from 'supertest';
 import {DEFAULT_FILTER} from "../helpers/parse-search-query";
@@ -35,10 +35,11 @@ describe('CV routes', () => {
             });
 
             it('Searching for all CV', async () => {
-                let response = await performGetRequest();
-                const { body: { filter, data, cvCount, } } = response;
+                const response = await performGetRequest();
+                const { body: { filter, data, cvCount, pagesCount } } = response;
                 expect(filter).toEqual(DEFAULT_FILTER);
                 expect(cvCount).toEqual(CV_COUNT_FOR_TEST);
+                expect(pagesCount).toEqual(2);
                 expect(data).toHaveLength(MAX_COUNT_OF_RESPONSE_ITEMS);
             });
 
@@ -50,7 +51,74 @@ describe('CV routes', () => {
                 expect(data).toHaveLength(CUSTOM_RESPONSE_SIZE);
             });
 
-            afterAll(async () => await closeAndDropDb())
+            it('Searching for a CV with an invalid size param', async () => {
+                const size = CV_COUNT_FOR_TEST * 2;
+                const route = SEARCH_ROUTE + `?size=${size}`;
+                const response = await performGetRequest(route);
+                const { body: { filter, data, } } = response;
+                expect(filter.size).toEqual(MAX_COUNT_OF_RESPONSE_ITEMS);
+                expect(data).toHaveLength(MAX_COUNT_OF_RESPONSE_ITEMS);
+            });
+
+            it('Searching for a CV with a page param', async () => {
+                const pageNumber = 2;
+                const route = SEARCH_ROUTE + `?page=${pageNumber}`;
+                const response = await performGetRequest(route);
+                const { body: { filter, data } } = response;
+                expect(filter.page).toEqual(pageNumber);
+                expect(data).toHaveLength(CV_COUNT_FOR_TEST - MAX_COUNT_OF_RESPONSE_ITEMS);
+            });
+
+            afterAll(async () => await dropDb());
+        });
+
+        describe('Test searching of a concrete data', () => {
+
+            beforeAll(async () => {
+                const description = 'description';
+                const cvDataArray = [{
+                    userHash: 1,
+                    title: 'Senior Android developer',
+                    description: description,
+                    tags: ['java', 'kotlin'],
+                }, {
+                    userHash: 2,
+                    title: 'Middle Android developer',
+                    description: description,
+                    tags: ['kotlin'],
+                }, {
+                    userHash: 3,
+                    title: 'Senior backend developer',
+                    description: description,
+                    tags: ['java', 'linux'],
+                }, {
+                    userHash: 4,
+                    title: 'Middle frontend developer',
+                    description: description,
+                    tags: ['javascript']
+                }];
+                await createTestCvFromDataArray(cvDataArray);
+            });
+
+            it('Searching by title', async () => {
+                const searchedTitle = 'se';
+                const route = SEARCH_ROUTE + `?title=${searchedTitle}`;
+                const response = await performGetRequest(route);
+                const { body: { filter, data, } } = response;
+                expect(filter.title).toEqual(searchedTitle);
+                expect(data).toHaveLength(2);
+            });
+
+            it('Searching by tags', async () => {
+                const searchedTags = 'java,kotlin';
+                const route = SEARCH_ROUTE + `?tags=${searchedTags}`;
+                const response = await performGetRequest(route);
+                const { body: { filter, data, } } = response;
+                expect(filter.tags).toEqual(searchedTags.split(','));
+                expect(data).toHaveLength(3);
+            });
+
+            afterAll(async () => await dropDb());
         });
 
         afterAll(async () => {
