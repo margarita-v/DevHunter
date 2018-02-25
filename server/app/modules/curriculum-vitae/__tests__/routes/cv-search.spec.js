@@ -2,7 +2,7 @@ import {closeAndDropDb, dropDb} from "../../../../utils/mongo-utils";
 import server from "../../../../server";
 import supertest from 'supertest';
 import {DEFAULT_FILTER} from "../../helpers/parse-search-query";
-import {createTestCvFromDataArray} from "../../helpers/test-helpers";
+import {createTestCvFromDataArray} from "../../helpers/cv-helpers";
 import {createFakeCvDataList} from "../../../../seeds/cv-seeds";
 import {MAX_COUNT_OF_RESPONSE_ITEMS, PAGE_NUMBER} from "../../constants/pagination";
 

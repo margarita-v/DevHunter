@@ -1,16 +1,15 @@
-import pick from 'lodash/pick';
-import {closeAndDropDb, dropDb, initDbConnection} from "../../../utils/mongo-utils";
+import {closeAndDropDb, initAndDropDb} from "../../../utils/mongo-utils";
 import {CREATE_CV_ERROR_MESSAGE, MAX_CV_COUNT} from "../services/cv-service";
+import {createTestCV, createTestCvList, TEST_CV_DATA} from "../helpers/cv-helpers";
+import {expectProperties} from "../../../helpers/test-helpers";
 import AppError from "../../../helpers/error";
-import {createTestCV, createTestCvList, TEST_CV_DATA} from "../helpers/test-helpers";
+import {pick} from "lodash";
 
 global.AppError = AppError;
 
 describe('CV Service test', () => {
-    beforeAll(async () => {
-        await initDbConnection();
-        await dropDb();
-    });
+
+    beforeAll(async () => await initAndDropDb());
 
     it('CV was created successfully', async () => {
         const cv = await createTestCV();
@@ -43,10 +42,3 @@ describe('CV Service test', () => {
 
     afterAll(async () => await closeAndDropDb());
 });
-
-/**
- * Helpful function which checks if the object has a properties which passed to args
- */
-function expectProperties(object, props) {
-    props.forEach((prop) => expect(object).toHaveProperty(prop));
-}

@@ -1,4 +1,4 @@
-import pick from 'lodash/pick';
+import {pick} from "lodash";
 import {User} from '../../users';
 import {checkCondition, returnData} from '../../../utils/common-utils';
 import jwtService from '../../../services/jwt-service';

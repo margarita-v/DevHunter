@@ -1,4 +1,3 @@
-import pick from 'lodash/pick';
 import Cv from '../models';
 import CvService from '../services';
 import {checkCondition, returnData, returnResult} from '../../../utils/common-utils';
@@ -8,6 +7,7 @@ import {
     NOT_FOUND_ERROR_CODE,
 } from '../../../constants/status-codes';
 import parseSearchQuery from '../helpers/parse-search-query';
+import {pick} from "lodash";
 
 /**
  * Controller for CV manipulation

@@ -14,14 +14,18 @@ function dropDb() {
     return mongoose.connection.db.dropDatabase();
 }
 
+async function initAndDropDb() {
+    await initDbConnection();
+    await dropDb();
+}
+
 async function closeAndDropDb() {
     await dropDb();
     await closeDbConnection();
 }
 
 export {
-    initDbConnection,
-    closeDbConnection,
     dropDb,
+    initAndDropDb,
     closeAndDropDb,
 };
