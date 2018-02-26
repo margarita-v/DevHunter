@@ -72,6 +72,6 @@ export default {
             .limit(size)
             .skip((page - 1) * size);
 
-        return { cvList, cvCount, pagesCount, page, };
+        return { cvList, cvCount, pagesCount, page };
     },
 };

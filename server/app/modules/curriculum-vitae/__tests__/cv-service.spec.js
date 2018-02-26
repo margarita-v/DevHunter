@@ -1,14 +1,13 @@
-import {closeAndDropDb, initAndDropDb} from "../../../utils/mongo-utils";
-import {CREATE_CV_ERROR_MESSAGE, MAX_CV_COUNT} from "../services/cv-service";
-import {createTestCV, createTestCvList, TEST_CV_DATA} from "../helpers/cv-helpers";
-import {COMMON_REQUIRED_FIELDS, expectProperties} from "../../../helpers/test-helpers";
-import AppError from "../../../helpers/error";
-import {pick} from "lodash";
+import {closeAndDropDb, initAndDropDb} from '../../../utils/mongo-utils';
+import {CREATE_CV_ERROR_MESSAGE, MAX_CV_COUNT} from '../services/cv-service';
+import {createTestCV, createTestCvList, TEST_CV_DATA} from '../helpers/cv-helpers';
+import {COMMON_REQUIRED_FIELDS, expectProperties} from '../../../helpers/test-helpers';
+import AppError from '../../../helpers/error';
+import {pick} from 'lodash';
 
 global.AppError = AppError;
 
 describe('CV Service test', () => {
-
     beforeAll(async () => await initAndDropDb());
 
     it('CV was created successfully', async () => {

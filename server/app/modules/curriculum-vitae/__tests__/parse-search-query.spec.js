@@ -1,8 +1,7 @@
-import parseSearchQuery, {DEFAULT_FILTER} from "../helpers/parse-search-query";
-import {MAX_COUNT_OF_RESPONSE_ITEMS} from "../constants/pagination";
+import parseSearchQuery, {DEFAULT_FILTER} from '../helpers/parse-search-query';
+import {MAX_COUNT_OF_RESPONSE_ITEMS} from '../constants/pagination';
 
 describe('Tests for the function of parsing a query for search', () => {
-
     it('Correct parsing of query for search for invalid params', () => {
         const result = parseSearchQuery({ fakeParam: 'value' });
         expect(result).toEqual(DEFAULT_FILTER);
@@ -30,5 +29,5 @@ describe('Tests for the function of parsing a query for search', () => {
             page: 'invalid',
         });
         expect(result).toEqual(DEFAULT_FILTER);
-    })
+    });
 });

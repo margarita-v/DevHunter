@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import {MONGO_URI} from "../config";
-import mongooseConnector from "../connectors/mongoose-connector";
+import {MONGO_URI} from '../config';
+import mongooseConnector from '../connectors/mongoose-connector';
 
 function initDbConnection() {
     return mongooseConnector(MONGO_URI);

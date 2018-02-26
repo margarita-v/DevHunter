@@ -1,4 +1,4 @@
-import CvService from "../services";
+import CvService from '../services';
 
 export const TEST_CV_DATA = {
     userHash: 'user-hash',

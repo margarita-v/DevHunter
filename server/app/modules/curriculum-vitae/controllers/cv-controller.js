@@ -7,7 +7,7 @@ import {
     NOT_FOUND_ERROR_CODE,
 } from '../../../constants/status-codes';
 import parseSearchQuery from '../helpers/parse-search-query';
-import {pick} from "lodash";
+import {pick} from 'lodash';
 
 /**
  * Controller for CV manipulation

@@ -1,38 +1,64 @@
-import {closeAndDropDb, dropDb} from "../utils/mongo-utils";
-import server from "../server";
-import supertest from 'supertest';
-import {DEFAULT_FILTER} from "../modules/curriculum-vitae/helpers/parse-search-query";
-import {createTestCvFromDataArray} from "../modules/curriculum-vitae/helpers/cv-helpers";
-import {createFakeCvDataList} from "../seeds/cv-seeds";
+import {dropDb} from '../utils/mongo-utils';
+import {User} from '../modules/users';
+import server from '../server';
+import request from 'supertest';
+import {DEFAULT_FILTER} from '../modules/curriculum-vitae/helpers/parse-search-query';
+import {createTestCvFromDataArray} from '../modules/curriculum-vitae/helpers/cv-helpers';
+import {createFakeCvDataList} from '../seeds/cv-seeds';
+import {TEST_USER_DATA} from '../modules/users/helpers/user-helpers';
+import {CREATED_STATUS_CODE, DEFAULT_ERROR_CODE} from '../constants/status-codes';
+import {expectProperties} from '../helpers/test-helpers';
 import {
     MAX_COUNT_OF_RESPONSE_ITEMS,
-    PAGE_NUMBER
-} from "../modules/curriculum-vitae/constants/pagination";
+    PAGE_NUMBER,
+} from '../modules/curriculum-vitae/constants/pagination';
 
-const EMPTY_RESPONSE = {
-    data: [],
-    filter: DEFAULT_FILTER,
-    cvCount: 0,
-    pagesCount: 0,
-    page: PAGE_NUMBER,
-};
+describe('Routes testing', () => {
+    describe('Auth test', () => {
+        const SIGN_UP_ROUTE = '/api/auth/signup';
 
-const CUSTOM_RESPONSE_SIZE = 5;
-const CV_COUNT_FOR_TEST = MAX_COUNT_OF_RESPONSE_ITEMS + CUSTOM_RESPONSE_SIZE;
+        const { firstName, lastName, email, password } = TEST_USER_DATA;
 
-describe('Routes testing' , () => {
+        it('User signed up successfully', () => {
+            request(server)
+                .post(SIGN_UP_ROUTE)
+                .field('firstName', firstName)
+                .field('lastName', lastName)
+                .field('email', email)
+                .field('password', password)
+                .expect(CREATED_STATUS_CODE, { firstName, lastName, email });
+        });
+
+        it('Test sign up for an invalid data', () => {
+            request(server)
+                .post(SIGN_UP_ROUTE)
+                .expect(DEFAULT_ERROR_CODE)
+                .end((err, res) => expectProperties(res.body.errors, User.createFields));
+        });
+
+        afterAll(async () => await dropDb());
+    });
 
     describe('CV searching', () => {
-
         const SEARCH_ROUTE = '/api/cv';
 
+        const EMPTY_RESPONSE = {
+            data: [],
+            filter: DEFAULT_FILTER,
+            cvCount: 0,
+            pagesCount: 0,
+            page: PAGE_NUMBER,
+        };
+
+        const CUSTOM_RESPONSE_SIZE = 5;
+        const CV_COUNT_FOR_TEST = MAX_COUNT_OF_RESPONSE_ITEMS + CUSTOM_RESPONSE_SIZE;
+
         it('Test for empty database', async () => {
-            const response = await performGetRequest();
+            const response = await performGetRequest(SEARCH_ROUTE);
             expect(response.body).toEqual(EMPTY_RESPONSE);
         });
 
         describe('Test searching of generated data', () => {
-
             beforeAll(async () => {
                 const cvDataArray = createFakeCvDataList(CV_COUNT_FOR_TEST);
                 await createTestCvFromDataArray(cvDataArray);
@@ -45,7 +71,7 @@ describe('Routes testing' , () => {
                 expect(pagesCount).toEqual(2);
             });
 
-            it ('Searching for CV with a size param', async () => {
+            it('Searching for CV with a size param', async () => {
                 await testForSize(CUSTOM_RESPONSE_SIZE);
             });
 
@@ -91,7 +117,6 @@ describe('Routes testing' , () => {
         });
 
         describe('Test searching of a concrete data', () => {
-
             beforeAll(async () => {
                 const description = 'description';
                 const cvDataArray = [{
@@ -113,7 +138,7 @@ describe('Routes testing' , () => {
                     userHash: 4,
                     title: 'Middle frontend developer',
                     description: description,
-                    tags: ['javascript']
+                    tags: ['javascript'],
                 }];
                 await createTestCvFromDataArray(cvDataArray);
             });
@@ -133,10 +158,7 @@ describe('Routes testing' , () => {
             afterAll(async () => await dropDb());
         });
 
-        afterAll(async () => {
-            await closeAndDropDb();
-            await server.close();
-        });
+        afterAll(async () => await dropDb());
 
         async function getResponseFields(routeParams = SEARCH_ROUTE,
                                          dataLength = MAX_COUNT_OF_RESPONSE_ITEMS) {
@@ -144,14 +166,15 @@ describe('Routes testing' , () => {
                 ? SEARCH_ROUTE + routeParams
                 : SEARCH_ROUTE;
             const response = await performGetRequest(route);
-            const { body: { filter, data, cvCount, pagesCount, page, } } = response;
+            const { body: { filter, data, cvCount, pagesCount, page } } = response;
             expect(data).toHaveLength(dataLength);
-            return { filter, cvCount, pagesCount, page, };
-        }
-
-        async function performGetRequest(route = SEARCH_ROUTE) {
-            return await supertest(server).get(route);
+            return { filter, cvCount, pagesCount, page };
         }
     });
 
+    afterAll(async () => await server.close());
+
+    async function performGetRequest(route) {
+        return await request(server).get(route);
+    }
 });
