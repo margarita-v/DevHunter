@@ -1,7 +1,7 @@
 import {closeAndDropDb, initAndDropDb} from "../../../utils/mongo-utils";
 import {CREATE_CV_ERROR_MESSAGE, MAX_CV_COUNT} from "../services/cv-service";
 import {createTestCV, createTestCvList, TEST_CV_DATA} from "../helpers/cv-helpers";
-import {expectProperties} from "../../../helpers/test-helpers";
+import {COMMON_REQUIRED_FIELDS, expectProperties} from "../../../helpers/test-helpers";
 import AppError from "../../../helpers/error";
 import {pick} from "lodash";
 
@@ -16,7 +16,7 @@ describe('CV Service test', () => {
         const cvObject = cv.toObject();
 
         expect(pick(cvObject, Object.keys(TEST_CV_DATA))).toEqual(TEST_CV_DATA);
-        expectProperties(cvObject, ['hash', 'createdAt', 'updatedAt']);
+        expectProperties(cvObject, COMMON_REQUIRED_FIELDS);
 
         await cv.remove();
     });

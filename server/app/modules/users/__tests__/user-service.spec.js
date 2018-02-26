@@ -1,17 +1,17 @@
-import {User} from '../../users'
-import {createTestUser} from "../../users/helpers/user-helpers";
-import {expectProperties} from "../../../helpers/test-helpers";
+import {User} from '../index'
+import {createTestUser} from "../helpers/user-helpers";
+import {COMMON_REQUIRED_FIELDS, expectProperties} from "../../../helpers/test-helpers";
 import {closeAndDropDb, initAndDropDb} from "../../../utils/mongo-utils";
 
-describe('Auth controller test', () => {
+describe('User service test', () => {
 
     beforeAll(async () => await initAndDropDb());
 
-    it('User signed up successfully', async () => {
+    it('User was created successfully', async () => {
         const user = await createTestUser();
         const userObject = user.toObject();
 
-        expectProperties(userObject, ['_id', 'hash', 'createdAt', 'updatedAt']);
+        expectProperties(userObject, COMMON_REQUIRED_FIELDS);
         await user.remove();
     });
 
