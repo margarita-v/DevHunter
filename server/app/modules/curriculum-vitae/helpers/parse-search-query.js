@@ -10,7 +10,7 @@ export const DEFAULT_FILTER = {
 /**
  * Function which returns a correct filter for searching of CV
  */
-export default function parseSearchQuery(queryParams) {
+export function parseSearchQuery(queryParams) {
     const filter = {
         title: queryParams.title ? queryParams.title : '',
         tags: queryParams.tags ? queryParams.tags.split(',') : [],

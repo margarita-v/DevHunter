@@ -75,6 +75,11 @@ CvSchema.statics.createFields =
     ['title', 'description', 'tags', 'phone', 'skype', 'jobHistory'];
 
 /**
+ * Names of required fields
+ */
+CvSchema.statics.requiredFields = ['title', 'description', 'tags', 'userHash'];
+
+/**
  * Static parameters for searching of CVs
  */
 CvSchema.statics.searchFields = ['title', 'tags', 'size', 'page'];

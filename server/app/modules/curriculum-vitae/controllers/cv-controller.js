@@ -6,7 +6,7 @@ import {
     FORBIDDEN_ERROR_CODE,
     NOT_FOUND_ERROR_CODE,
 } from '../../../constants/status-codes';
-import parseSearchQuery from '../helpers/parse-search-query';
+import {parseSearchQuery} from '../helpers/parse-search-query';
 import {pick} from 'lodash';
 
 /**

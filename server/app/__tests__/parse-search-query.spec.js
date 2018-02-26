@@ -1,5 +1,8 @@
-import parseSearchQuery, {DEFAULT_FILTER} from '../helpers/parse-search-query';
-import {MAX_COUNT_OF_RESPONSE_ITEMS} from '../constants/pagination';
+import {MAX_COUNT_OF_RESPONSE_ITEMS} from '../modules/curriculum-vitae/constants/pagination';
+import {
+    parseSearchQuery,
+    DEFAULT_FILTER,
+} from '../modules/curriculum-vitae/helpers/parse-search-query';
 
 describe('Tests for the function of parsing a query for search', () => {
     it('Correct parsing of query for search for invalid params', () => {

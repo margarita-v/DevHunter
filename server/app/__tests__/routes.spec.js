@@ -1,13 +1,13 @@
+import {createTestCvFromDataArray} from '../modules/curriculum-vitae/helpers/cv-helpers';
+import {createFakeCvDataList} from '../seeds/cv-seeds';
+import {expectProperties} from '../helpers/test-helpers';
 import {dropDb} from '../utils/mongo-utils';
+import {CREATED_STATUS_CODE, DEFAULT_ERROR_CODE} from '../constants/status-codes';
+import {DEFAULT_FILTER} from '../modules/curriculum-vitae/helpers/parse-search-query';
+import {TEST_USER_DATA} from '../modules/users/helpers/user-helpers';
 import {User} from '../modules/users';
 import server from '../server';
 import request from 'supertest';
-import {DEFAULT_FILTER} from '../modules/curriculum-vitae/helpers/parse-search-query';
-import {createTestCvFromDataArray} from '../modules/curriculum-vitae/helpers/cv-helpers';
-import {createFakeCvDataList} from '../seeds/cv-seeds';
-import {TEST_USER_DATA} from '../modules/users/helpers/user-helpers';
-import {CREATED_STATUS_CODE, DEFAULT_ERROR_CODE} from '../constants/status-codes';
-import {expectProperties} from '../helpers/test-helpers';
 import {
     MAX_COUNT_OF_RESPONSE_ITEMS,
     PAGE_NUMBER,
@@ -20,7 +20,7 @@ describe('Routes testing', () => {
         const { firstName, lastName, email, password } = TEST_USER_DATA;
 
         it('User signed up successfully', () => {
-            request(server)
+            performRequest()
                 .post(SIGN_UP_ROUTE)
                 .field('firstName', firstName)
                 .field('lastName', lastName)
@@ -30,7 +30,7 @@ describe('Routes testing', () => {
         });
 
         it('Test sign up for an invalid data', () => {
-            request(server)
+            performRequest()
                 .post(SIGN_UP_ROUTE)
                 .expect(DEFAULT_ERROR_CODE)
                 .end((err, res) => expectProperties(res.body.errors, User.createFields));
@@ -71,21 +71,17 @@ describe('Routes testing', () => {
                 expect(pagesCount).toEqual(2);
             });
 
-            it('Searching for CV with a size param', async () => {
-                await testForSize(CUSTOM_RESPONSE_SIZE);
-            });
+            it('Searching for CV with a size param',
+                async () => await testForSize(CUSTOM_RESPONSE_SIZE));
 
-            it('Searching for a CV with an invalid size param', async () => {
-                await testForSize(CV_COUNT_FOR_TEST * 2, MAX_COUNT_OF_RESPONSE_ITEMS);
-            });
+            it('Searching for a CV with an invalid size param',
+                async () => await testForSize(CV_COUNT_FOR_TEST * 2, MAX_COUNT_OF_RESPONSE_ITEMS));
 
-            it('Searching for a CV with a page param', async () => {
-                await testForPageNumber(2);
-            });
+            it('Searching for a CV with a page param',
+                async () => await testForPageNumber(2));
 
-            it('Searching for a CV with an invalid page param', async () => {
-                await testForPageNumber(10);
-            });
+            it('Searching for a CV with an invalid page param',
+                async () => await testForPageNumber(10));
 
             /**
              * Helpful function for testing requests with a size param
@@ -140,6 +136,7 @@ describe('Routes testing', () => {
                     description: description,
                     tags: ['javascript'],
                 }];
+
                 await createTestCvFromDataArray(cvDataArray);
             });
 
@@ -158,8 +155,6 @@ describe('Routes testing', () => {
             afterAll(async () => await dropDb());
         });
 
-        afterAll(async () => await dropDb());
-
         async function getResponseFields(routeParams = SEARCH_ROUTE,
                                          dataLength = MAX_COUNT_OF_RESPONSE_ITEMS) {
             const route = routeParams !== SEARCH_ROUTE
@@ -173,8 +168,12 @@ describe('Routes testing', () => {
     });
 
     afterAll(async () => await server.close());
-
-    async function performGetRequest(route) {
-        return await request(server).get(route);
-    }
 });
+
+function performRequest() {
+    return request(server);
+}
+
+async function performGetRequest(route) {
+    return await performRequest().get(route);
+}
