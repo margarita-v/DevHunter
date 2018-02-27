@@ -64,5 +64,5 @@ describe('Tests for all services', () => {
         });
     });
 
-    afterAll(async () => closeAndDropDb());
+    afterAll(async () => await closeAndDropDb());
 });
