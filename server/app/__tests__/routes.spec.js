@@ -2,7 +2,6 @@ import {createTestCvFromDataArray} from '../modules/curriculum-vitae/helpers/cv-
 import {createFakeCvDataList} from '../seeds/cv-seeds';
 import {expectProperties} from '../helpers/test-helpers';
 import {dropDb} from '../utils/mongo-utils';
-import {CREATED_STATUS_CODE, DEFAULT_ERROR_CODE} from '../constants/status-codes';
 import {DEFAULT_FILTER} from '../modules/curriculum-vitae/helpers/parse-search-query';
 import {TEST_USER_DATA} from '../modules/users/helpers/user-helpers';
 import {User} from '../modules/users';
@@ -12,31 +11,77 @@ import {
     MAX_COUNT_OF_RESPONSE_ITEMS,
     PAGE_NUMBER,
 } from '../modules/curriculum-vitae/constants/pagination';
+import {
+    CREATED_STATUS_CODE,
+    DEFAULT_ERROR_CODE,
+    NOT_FOUND_ERROR_CODE,
+    OK_STATUS_CODE
+} from '../constants/status-codes';
 
 describe('Routes testing', () => {
+    const requestServer = request(server);
+
     describe('Auth test', () => {
         const SIGN_UP_ROUTE = '/api/auth/signup';
+        const SIGN_IN_ROUTE = '/api/auth/signin';
 
-        const { firstName, lastName, email, password } = TEST_USER_DATA;
+        const { email, password } = TEST_USER_DATA;
 
-        it('User signed up successfully', () => {
-            performRequest()
-                .post(SIGN_UP_ROUTE)
-                .field('firstName', firstName)
-                .field('lastName', lastName)
-                .field('email', email)
-                .field('password', password)
-                .expect(CREATED_STATUS_CODE, { firstName, lastName, email });
+        describe('Sign up test', () => {
+            it('User signed up successfully', (done) => {
+                signUp().expect(CREATED_STATUS_CODE, done);
+            });
+
+            it('Test sign up for an invalid data', (done) => {
+                requestServer.post(SIGN_UP_ROUTE)
+                    .expect(DEFAULT_ERROR_CODE)
+                    .end((err, res) => {
+                        expectProperties(res.body.errors, User.createFields);
+                        done();
+                    });
+            });
+
+            afterAll(async () => await dropDb());
         });
 
-        it('Test sign up for an invalid data', () => {
-            performRequest()
-                .post(SIGN_UP_ROUTE)
-                .expect(DEFAULT_ERROR_CODE)
-                .end((err, res) => expectProperties(res.body.errors, User.createFields));
+        describe('Sign in test', () => {
+            it('User signed in successfully', async (done) => {
+                await signUp();
+
+                requestServer.post(SIGN_IN_ROUTE)
+                    .send({ email, password })
+                    .expect(OK_STATUS_CODE)
+                    .end((err, res) => {
+                        expect(res.body).toHaveProperty('data');
+                        done();
+                    });
+            });
+
+            it('Test for sign in for an invalid data', (done) => {
+                requestServer.post(SIGN_IN_ROUTE).expect(DEFAULT_ERROR_CODE, done);
+            });
+
+            it('Try to sign in with an invalid password', async (done) => {
+                await signUp();
+                signIn({ email, password: 'invalid-password' }, DEFAULT_ERROR_CODE, done);
+            });
+
+            it('Try to sign in with unknown email', (done) => {
+                signIn({email: 'another-email', password}, NOT_FOUND_ERROR_CODE, done);
+            });
+
+            afterAll(async () => await dropDb());
         });
 
-        afterAll(async () => await dropDb());
+        //TODO Create function for performing common server action and another functions
+        // for sign in and sign up
+        function signUp() {
+            return requestServer.post(SIGN_UP_ROUTE).send(TEST_USER_DATA);
+        }
+
+        function signIn(data, responseCode, done) {
+            return requestServer.post(SIGN_IN_ROUTE).send(data).expect(responseCode, done);
+        }
     });
 
     describe('CV searching', () => {
@@ -168,12 +213,12 @@ describe('Routes testing', () => {
     });
 
     afterAll(async () => await server.close());
+
+    async function performPostRequest(route) {
+        return await requestServer.post(route);
+    }
+
+    async function performGetRequest(route) {
+        return await requestServer.get(route);
+    }
 });
-
-function performRequest() {
-    return request(server);
-}
-
-async function performGetRequest(route) {
-    return await performRequest().get(route);
-}
