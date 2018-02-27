@@ -1,4 +1,4 @@
-import {createTestCvFromDataArray} from '../modules/curriculum-vitae/helpers/cv-helpers';
+import {createTestCvFromDataArray, TEST_CV_DATA} from '../modules/curriculum-vitae/helpers/cv-helpers';
 import {createFakeCvDataList} from '../seeds/cv-seeds';
 import {expectProperties} from '../helpers/test-helpers';
 import {dropDb} from '../utils/mongo-utils';
@@ -8,8 +8,9 @@ import {User} from '../modules/users';
 import request from 'supertest';
 import server from '../server';
 import {
+    AUTH_ERROR_CODE,
     CREATED_STATUS_CODE,
-    DEFAULT_ERROR_CODE,
+    DEFAULT_ERROR_CODE, FORBIDDEN_ERROR_CODE,
     NOT_FOUND_ERROR_CODE,
     OK_STATUS_CODE,
 } from '../constants/status-codes';
@@ -22,8 +23,10 @@ const requestServer = request(server);
 
 const SIGN_UP_ROUTE = '/api/auth/signup';
 const SIGN_IN_ROUTE = '/api/auth/signin';
+const CV_ROUTE = '/api/cv';
 
 const { email, password } = TEST_USER_DATA;
+const DEFAULT_USER = { email, password };
 
 describe('Auth test', () => {
     describe('Sign up test', () => {
@@ -43,22 +46,22 @@ describe('Auth test', () => {
     describe('Sign in test', () => {
         it('User signed in successfully', async (done) => {
             await signUp();
-            postAndCheck(SIGN_IN_ROUTE, { email, password }, OK_STATUS_CODE, (res) => {
+            postAndCheck(SIGN_IN_ROUTE, DEFAULT_USER, OK_STATUS_CODE, (res) => {
                 expect(res.body).toHaveProperty('data');
                 done();
             });
         });
 
         it('Test for sign in for an invalid data',
-            (done) => signIn({}, DEFAULT_ERROR_CODE, done));
+            (done) => testSignIn({}, DEFAULT_ERROR_CODE, done));
 
         it('Try to sign in with an invalid password', async (done) => {
             await signUp();
-            signIn({ email, password: 'invalid-password' }, DEFAULT_ERROR_CODE, done);
+            testSignIn({ email, password: 'invalid-password' }, DEFAULT_ERROR_CODE, done);
         });
 
         it('Try to sign in with unknown email',
-            (done) => signIn({email: 'another-email', password}, NOT_FOUND_ERROR_CODE, done));
+            (done) => testSignIn({email: 'another-email', password}, NOT_FOUND_ERROR_CODE, done));
 
         afterAll(async () => await dropDb());
     });
@@ -66,9 +69,46 @@ describe('Auth test', () => {
     afterAll(() => server.close());
 });
 
-describe('CV searching', () => {
-    const SEARCH_ROUTE = '/api/cv';
+describe('CV creation', () => {
+    let userHash, token, cvData;
+    const AUTHORIZATION = 'Authorization';
 
+    beforeAll(async () => {
+        const signUpResult = await signUp();
+        const signInResult = await signIn();
+
+        const { hash } = signUpResult.body.data;
+        const { data } = signInResult.body;
+
+        userHash = hash;
+        token = data;
+
+        cvData = TEST_CV_DATA;
+        cvData.userHash = userHash;
+    });
+
+    it('CV was created successfully', (done) => {
+        postData(CV_ROUTE, cvData)
+            .set(AUTHORIZATION, token)
+            .expect(CREATED_STATUS_CODE, done);
+    });
+
+    it('Unable to create a CV without user\'s token',
+        (done) => postAndCheck(CV_ROUTE, cvData, FORBIDDEN_ERROR_CODE, () => done()));
+
+    it('Unable to create a CV with an invalid token', (done) => {
+        postData(CV_ROUTE, cvData)
+            .set(AUTHORIZATION, token + '1')
+            .expect(AUTH_ERROR_CODE, done);
+    });
+
+    afterAll(async () => {
+        await dropDb();
+        server.close();
+    });
+});
+
+describe('CV searching', () => {
     const EMPTY_RESPONSE = {
         data: [],
         filter: DEFAULT_FILTER,
@@ -81,7 +121,7 @@ describe('CV searching', () => {
     const CV_COUNT_FOR_TEST = MAX_COUNT_OF_RESPONSE_ITEMS + CUSTOM_RESPONSE_SIZE;
 
     it('Test for empty database', async () => {
-        const response = await performGetRequest(SEARCH_ROUTE);
+        const response = await performGetRequest(CV_ROUTE);
         expect(response.body).toEqual(EMPTY_RESPONSE);
     });
 
@@ -184,11 +224,11 @@ describe('CV searching', () => {
 
     afterAll(() => server.close());
 
-    async function getResponseFields(routeParams = SEARCH_ROUTE,
+    async function getResponseFields(routeParams = CV_ROUTE,
                                      dataLength = MAX_COUNT_OF_RESPONSE_ITEMS) {
-        const route = routeParams !== SEARCH_ROUTE
-            ? SEARCH_ROUTE + routeParams
-            : SEARCH_ROUTE;
+        const route = routeParams !== CV_ROUTE
+            ? CV_ROUTE + routeParams
+            : CV_ROUTE;
         const response = await performGetRequest(route);
         const { body: { filter, data, cvCount, pagesCount, page } } = response;
         expect(data).toHaveLength(dataLength);
@@ -201,7 +241,11 @@ function signUp() {
     return postData(SIGN_UP_ROUTE, TEST_USER_DATA);
 }
 
-function signIn(data, responseCode, done) {
+function signIn() {
+    return postData(SIGN_IN_ROUTE, DEFAULT_USER);
+}
+
+function testSignIn(data, responseCode, done) {
     return postData(SIGN_IN_ROUTE, data).expect(responseCode, done);
 }
 // endregion
