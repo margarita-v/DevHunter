@@ -27,6 +27,7 @@ const CV_ROUTE = '/api/cv';
 
 const { email, password } = TEST_USER_DATA;
 const DEFAULT_USER = { email, password };
+const AUTHORIZATION = 'Authorization';
 
 describe('Auth test', () => {
     describe('Sign up test', () => {
@@ -69,9 +70,8 @@ describe('Auth test', () => {
     afterAll(() => server.close());
 });
 
-describe('CV creation', () => {
-    let userHash, token, cvData;
-    const AUTHORIZATION = 'Authorization';
+describe('CV controller test', () => {
+    let userHash, cvData, token, invalidToken;
 
     beforeAll(async () => {
         const signUpResult = await signUp();
@@ -82,24 +82,21 @@ describe('CV creation', () => {
 
         userHash = hash;
         token = data;
+        invalidToken = token + '1';
 
         cvData = TEST_CV_DATA;
         cvData.userHash = userHash;
     });
 
-    it('CV was created successfully', (done) => {
-        postData(CV_ROUTE, cvData)
-            .set(AUTHORIZATION, token)
-            .expect(CREATED_STATUS_CODE, done);
-    });
+    describe('CV creation', () => {
+        it('CV was created successfully',
+            (done) => postAndSetToken(CV_ROUTE, cvData, token, CREATED_STATUS_CODE, done));
 
-    it('Unable to create a CV without user\'s token',
-        (done) => postAndCheck(CV_ROUTE, cvData, FORBIDDEN_ERROR_CODE, () => done()));
+        it('Unable to create a CV without user\'s token',
+            (done) => postAndCheck(CV_ROUTE, cvData, FORBIDDEN_ERROR_CODE, () => done()));
 
-    it('Unable to create a CV with an invalid token', (done) => {
-        postData(CV_ROUTE, cvData)
-            .set(AUTHORIZATION, token + '1')
-            .expect(AUTH_ERROR_CODE, done);
+        it('Unable to create a CV with an invalid token',
+            (done) => postAndSetToken(CV_ROUTE, cvData, invalidToken, AUTH_ERROR_CODE, done));
     });
 
     afterAll(async () => {
@@ -263,5 +260,11 @@ function postAndCheck(route, data, responseCode, end) {
     return postData(route, data)
         .expect(responseCode)
         .end((err, res) => end(res));
+}
+
+function postAndSetToken(route, data, token, responseCode, done) {
+    return postData(route, data)
+        .set(AUTHORIZATION, token)
+        .expect(responseCode, done);
 }
 // endregion

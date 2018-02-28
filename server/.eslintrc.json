@@ -19,6 +19,6 @@
     "require-jsdoc": 0,
     "valid-jsdoc": 0,
     "no-invalid-this": 0,
-    "one-var": 0y
+    "one-var": 0
   }
 }
