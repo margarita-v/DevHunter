@@ -71,7 +71,7 @@ describe('Auth test', () => {
 });
 
 describe('CV controller test', () => {
-    let userHash, cvData, token, invalidToken;
+    let userHash, cvHash, cvData, token, invalidToken;
 
     beforeAll(async () => {
         const signUpResult = await signUp();
@@ -89,14 +89,31 @@ describe('CV controller test', () => {
     });
 
     describe('CV creation', () => {
-        it('CV was created successfully',
-            (done) => postAndSetToken(CV_ROUTE, cvData, token, CREATED_STATUS_CODE, done));
+        it('CV was created successfully', (done) =>
+            postAndSetToken(CV_ROUTE, cvData, token, CREATED_STATUS_CODE, (res) => {
+                const { hash } = res.body.data;
+                cvHash = hash;
+                done();
+            })
+        );
 
-        it('Unable to create a CV without user\'s token',
-            (done) => postAndCheck(CV_ROUTE, cvData, FORBIDDEN_ERROR_CODE, () => done()));
+        it('Unable to create a CV without user\'s token', (done) =>
+            postAndCheck(CV_ROUTE, cvData, FORBIDDEN_ERROR_CODE, () => done())
+        );
 
-        it('Unable to create a CV with an invalid token',
-            (done) => postAndSetToken(CV_ROUTE, cvData, invalidToken, AUTH_ERROR_CODE, done));
+        it('Unable to create a CV with an invalid token', (done) =>
+            postAndSetToken(CV_ROUTE, cvData, invalidToken, AUTH_ERROR_CODE, () => done())
+        );
+    });
+
+    describe('CV deleting', () => {
+        it('CV was deleted successfully', (done) =>
+            deleteCv(cvHash)
+                .set(AUTHORIZATION, token)
+                .expect(OK_STATUS_CODE, done));
+
+        it('Unable to delete a CV without user\'s token',
+            (done) => deleteCv(cvHash).expect(FORBIDDEN_ERROR_CODE, done));
     });
 
     afterAll(async () => {
@@ -252,6 +269,10 @@ async function performGetRequest(route) {
     return await requestServer.get(route);
 }
 
+function deleteCv(cvHash) {
+    return requestServer.delete(CV_ROUTE + '/' + cvHash);
+}
+
 function postData(route, data) {
     return requestServer.post(route).send(data);
 }
@@ -262,9 +283,10 @@ function postAndCheck(route, data, responseCode, end) {
         .end((err, res) => end(res));
 }
 
-function postAndSetToken(route, data, token, responseCode, done) {
+function postAndSetToken(route, data, token, responseCode, end) {
     return postData(route, data)
         .set(AUTHORIZATION, token)
-        .expect(responseCode, done);
+        .expect(responseCode)
+        .end((err, res) => end(res));
 }
 // endregion
