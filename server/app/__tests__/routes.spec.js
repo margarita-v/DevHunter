@@ -89,26 +89,26 @@ describe('CV controller test', () => {
     });
 
     describe('CV creation', () => {
-        it('CV was created successfully', (done) =>
-            postAndSetToken(CV_ROUTE, cvData, token, CREATED_STATUS_CODE, (res) => {
+        it('CV was created successfully',
+            (done) => createCv(token, CREATED_STATUS_CODE, (res) => {
                 const { hash } = res.body.data;
                 cvHash = hash;
                 done();
             })
         );
 
-        it('Unable to create a CV without user\'s token', (done) =>
-            postAndCheck(CV_ROUTE, cvData, FORBIDDEN_ERROR_CODE, () => done())
+        it('Unable to create a CV without user\'s token',
+            (done) => postAndCheck(CV_ROUTE, cvData, FORBIDDEN_ERROR_CODE, () => done())
         );
 
-        it('Unable to create a CV with an invalid token', (done) =>
-            postAndSetToken(CV_ROUTE, cvData, invalidToken, AUTH_ERROR_CODE, () => done())
+        it('Unable to create a CV with an invalid token',
+            (done) => createCv(invalidToken, AUTH_ERROR_CODE, () => done())
         );
     });
 
     describe('CV deleting', () => {
-        it('CV was deleted successfully', (done) =>
-            deleteCv(cvHash)
+        it('CV was deleted successfully',
+            (done) => deleteCv(cvHash)
                 .set(AUTHORIZATION, token)
                 .expect(OK_STATUS_CODE, done));
 
@@ -120,6 +120,10 @@ describe('CV controller test', () => {
         await dropDb();
         server.close();
     });
+
+    function createCv(token, responseCode, done) {
+        return postAndCheckWithToken(CV_ROUTE, cvData, token, responseCode, done);
+    }
 });
 
 describe('CV searching', () => {
@@ -277,16 +281,20 @@ function postData(route, data) {
     return requestServer.post(route).send(data);
 }
 
+function postDataWithToken(route, data, token) {
+    return postData(route, data)
+        .set(AUTHORIZATION, token);
+}
+// endregion
+
 function postAndCheck(route, data, responseCode, end) {
     return postData(route, data)
         .expect(responseCode)
         .end((err, res) => end(res));
 }
 
-function postAndSetToken(route, data, token, responseCode, end) {
-    return postData(route, data)
-        .set(AUTHORIZATION, token)
+function postAndCheckWithToken(route, data, token, responseCode, end) {
+    return postDataWithToken(route, data, token)
         .expect(responseCode)
         .end((err, res) => end(res));
 }
-// endregion
