@@ -18,7 +18,7 @@ import {
     MAX_COUNT_OF_RESPONSE_ITEMS,
     PAGE_NUMBER,
 } from '../modules/curriculum-vitae/constants/pagination';
-import {MAX_CV_COUNT} from "../modules/curriculum-vitae/services/cv-service";
+import {MAX_CV_COUNT} from '../modules/curriculum-vitae/services/cv-service';
 
 const requestServer = request(server);
 
@@ -121,11 +121,9 @@ describe('Tests for CV and user controllers', () => {
            for (let i = 0; i < MAX_CV_COUNT; i++) {
                await postDataWithToken(CV_ROUTE, cvData, token);
            }
-           performGetRequest(USERS_ROUTE + '/' + userHash + '/all-cv')
-               .expect(OK_STATUS_CODE)
-               .end((err, res) => {
-                   console.log(res.body);
-               });
+           const response = await performGetRequest(USERS_ROUTE + '/' + userHash + '/all-cv');
+           const { body: { data } } = response;
+           expect(data).toHaveLength(MAX_CV_COUNT);
         });
     });
 
