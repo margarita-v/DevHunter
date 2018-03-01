@@ -9,7 +9,7 @@
     "lint": "eslint app",
     "lint:fix": "eslint --fix app",
     "seed": "babel-node app/seeds",
-    "test": "NODE_ENV=test jest app --forceExit"
+    "test": "NODE_ENV=test jest app"
   },
   "jest": {
     "testEnvironment": "node",

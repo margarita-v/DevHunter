@@ -18,11 +18,13 @@ import {
     MAX_COUNT_OF_RESPONSE_ITEMS,
     PAGE_NUMBER,
 } from '../modules/curriculum-vitae/constants/pagination';
+import {MAX_CV_COUNT} from "../modules/curriculum-vitae/services/cv-service";
 
 const requestServer = request(server);
 
 const SIGN_UP_ROUTE = '/api/auth/signup';
 const SIGN_IN_ROUTE = '/api/auth/signin';
+const USERS_ROUTE = '/api/users';
 const CV_ROUTE = '/api/cv';
 
 const { email, password } = TEST_USER_DATA;
@@ -66,11 +68,9 @@ describe('Auth test', () => {
 
         afterAll(async () => await dropDb());
     });
-
-    afterAll(() => server.close());
 });
 
-describe('CV controller test', () => {
+describe('Tests for CV and user controllers', () => {
     let userHash, cvHash, cvData, token, invalidToken;
 
     beforeAll(async () => {
@@ -116,10 +116,20 @@ describe('CV controller test', () => {
             (done) => deleteCv(cvHash).expect(FORBIDDEN_ERROR_CODE, done));
     });
 
-    afterAll(async () => {
-        await dropDb();
-        server.close();
+    describe('Get all CV for the current user', () => {
+        it('All CV were get successfully', async () => {
+           for (let i = 0; i < MAX_CV_COUNT; i++) {
+               await postDataWithToken(CV_ROUTE, cvData, token);
+           }
+           performGetRequest(USERS_ROUTE + '/' + userHash + '/all-cv')
+               .expect(OK_STATUS_CODE)
+               .end((err, res) => {
+                   console.log(res.body);
+               });
+        });
     });
+
+    afterAll(async () => await dropDb());
 
     function createCv(token, responseCode, done) {
         return postAndCheckWithToken(CV_ROUTE, cvData, token, responseCode, done);
@@ -240,8 +250,6 @@ describe('CV searching', () => {
         afterAll(async () => await dropDb());
     });
 
-    afterAll(() => server.close());
-
     async function getResponseFields(routeParams = CV_ROUTE,
                                      dataLength = MAX_COUNT_OF_RESPONSE_ITEMS) {
         const route = routeParams !== CV_ROUTE
@@ -253,6 +261,8 @@ describe('CV searching', () => {
         return { filter, cvCount, pagesCount, page };
     }
 });
+
+afterAll(() => server.close());
 
 // region User's authorization
 function signUp() {
@@ -269,8 +279,8 @@ function testSignIn(data, responseCode, done) {
 // endregion
 
 // region HTTP requests
-async function performGetRequest(route) {
-    return await requestServer.get(route);
+function performGetRequest(route) {
+    return requestServer.get(route);
 }
 
 function deleteCv(cvHash) {
