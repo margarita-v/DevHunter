@@ -43,7 +43,7 @@ describe('Auth test', () => {
             })
         );
 
-        afterAll(async () => await dropDb());
+        afterAll(dropDb);
     });
 
     describe('Sign in test', () => {
@@ -66,7 +66,7 @@ describe('Auth test', () => {
         it('Try to sign in with unknown email',
             (done) => testSignIn({email: 'another-email', password}, NOT_FOUND_ERROR_CODE, done));
 
-        afterAll(async () => await dropDb());
+        afterAll(dropDb);
     });
 });
 
@@ -127,7 +127,7 @@ describe('Tests for CV and user controllers', () => {
         });
     });
 
-    afterAll(async () => await dropDb());
+    afterAll(dropDb);
 
     function createCv(token, responseCode, done) {
         return postAndCheckWithToken(CV_ROUTE, cvData, token, responseCode, done);
@@ -202,7 +202,7 @@ describe('CV searching', () => {
             expect(page).toEqual(expectedFilterPage);
         }
 
-        afterAll(async () => await dropDb());
+        afterAll(dropDb);
     });
 
     describe('Test searching of a concrete data', () => {
@@ -245,7 +245,7 @@ describe('CV searching', () => {
             expect(filter.tags).toEqual(searchedTags.split(','));
         });
 
-        afterAll(async () => await dropDb());
+        afterAll(dropDb);
     });
 
     async function getResponseFields(routeParams = CV_ROUTE,

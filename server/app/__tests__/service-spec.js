@@ -15,7 +15,7 @@ import {
 } from '../modules/curriculum-vitae/services/cv-service';
 
 describe('Tests for all services', () => {
-    beforeAll(async () => await initAndDropDb());
+    beforeAll(initAndDropDb);
 
     describe('Tests for CV Service', () => {
         it('CV was created successfully', async () => {
@@ -64,5 +64,5 @@ describe('Tests for all services', () => {
         });
     });
 
-    afterAll(async () => await closeAndDropDb());
+    afterAll(closeAndDropDb);
 });
